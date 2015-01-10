@@ -6,28 +6,28 @@
 
 class Matrix {
 public:
-	Matrix(const std::vector< std::vector<double> > &matrix) {
-		if (matrix.empty()) {
-			throw std::invalid_argument("Matrix: Cannot create an empty matrix.");
-		}
+	/*
+	Initializes a Matrix by copying from a vector of vector of doubles.
+	Expects that the vector<vector<double>> to be nonempty.
+	*/
+	Matrix(const std::vector< std::vector<double> > &matrix);
 
-		//used to check if the input matrix has all lines of same size
-		std::vector< std::vector<double> >::size_type length = matrix[0].size();
-		
-		//copies the entries of the input into the private data structure
-		for (auto &line : matrix) {
-			if (line.size() != length) {
-				_matrix = std::vector<double>();
-				throw std::invalid_argument("Matrix: All the lines in a matrix must have the same length.");
-			}
-			for (auto &entry : line) {
-				_matrix.push_back(entry);
-			}
-		}
-	};
+	/*
+	Initializes a Matrix of dimensions line x column with the defaultValue.
+	Expects line and column to be positive integers
+	*/
+	Matrix(int line, int column, double defaultValue);
+
+	/*
+	Copy constructor. Makes a deep copy of the input matrix.
+	*/
+	Matrix(const Matrix &matrix);
+
 private:
 	//data structures
 	std::vector<double> _matrix;
+	int _lines;
+	int _columns;
 };
 
 #endif
