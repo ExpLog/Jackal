@@ -42,3 +42,21 @@ Matrix::Matrix(const Matrix &matrix) :
 	_columns(matrix._columns) {
 	_matrix = std::vector<double>(matrix._matrix);
 }
+
+std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
+	auto itr = matrix._matrix.begin();
+	auto end = matrix._matrix.end();
+	int j = 0; //counts the columns, so we can know when to end the line
+
+	os << "Matrix " << matrix._lines << "x" << matrix._columns << std::endl;
+	for (; itr != end; ++itr) {
+		++j;
+		if (j >= matrix._columns) {
+			j = 0;
+			os << *itr << std::endl;
+			continue;		
+		}
+		os << *itr << ", ";
+	}
+	return os;
+}
