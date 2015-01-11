@@ -5,7 +5,7 @@
 
 /*
 Initializes a Matrix by copying from a vector of vector of doubles.
-Expects the vector< vector<double> > to be nonempty.
+Expects the vector< vector<double> > to be non-empty.
 This constructor can be used to cast.
 */
 Matrix::Matrix (const std::vector< std::vector<double> > &matrix) {

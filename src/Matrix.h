@@ -17,7 +17,7 @@ public:
 
 	/*
 	Initializes a Matrix by copying from a vector of vector of doubles.
-	Expects the vector< vector<double> > to be nonempty.
+	Expects the vector< vector<double> > to be non-empty.
 	This constructor can be used to cast.
 	*/
 	Matrix (const std::vector< std::vector<double> >&);
@@ -44,7 +44,7 @@ public:
 	//end of printing
 
 	/*
-	Overloads () to acess an element [i,j] of the matrix.
+	Overloads () to access an element [i,j] of the matrix.
 	*/
 	double& operator() (std::vector< std::vector<double> >::size_type, std::vector<double>::size_type);
 
