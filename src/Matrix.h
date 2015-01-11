@@ -6,6 +6,16 @@
 
 class Matrix {
 public:
+
+	/*
+	The typedefs below create the interface for matrix iterators.
+	They are input (i.e., read-only) iterators.
+	Goes through one row at a time 
+	(e.g.: starts at the first row, reads all elements in it; then goes to the beginning of the second row, and so on).
+	*/
+	typedef std::vector<double>::iterator iterator;
+	typedef std::vector<double>::const_iterator const_iterator;
+
 	//constructors
 
 	/*
@@ -36,31 +46,60 @@ public:
 	Matrix (const Matrix&);
 	//end of constructors
 
-	//printing
-	/*
-	Overloads << so we can print a matrix.
-	*/
-	friend std::ostream& operator<< (std::ostream&, const Matrix&);
-	//end of printing
-
 	/*
 	Overloads () to access an element [i,j] of the matrix.
 	*/
 	double& operator() (std::vector< std::vector<double> >::size_type, std::vector<double>::size_type);
 
 	/*
+	Overloads * to multiply a matrix on the right by a vector.
+	Returns a vector<double> of dimension equal to the number of rows of the matrix.
+	If the dimension of the vector is different from the number of columns of the matrix,
+	then it returns a ValueError.
+	*/
+	std::vector<double> operator* (std::vector<double>&);
+
+	/*
 	Returns the number of rows of the matrix.
 	*/
-	int rows() const;
+	int rows () const;
 
 	/*
 	Returns the number of columns of the matrix.
 	*/
 	int columns () const;
-	
 
+	/*
+	Returns true if the matrix is empty, false otherwise.
+	It is inlined to optimize performance.
+	*/
+	inline bool empty () const {
+		return _matrix.empty();
+	}
+
+
+	/*
+	Returns a const iterator pointing to the beginning of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline const_iterator begin () const {
+		return _matrix.begin();
+	}
+
+	/*
+	Returns a const iterator pointing to the element right after the end of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline const_iterator end() const {
+		return _matrix.end();
+	}
 	
 private:
+	/*
+	Returns the total number of entries in _matrix.
+	*/
+	std::vector<double>::size_type Matrix::size() const;
+
 	//data structures
 	std::vector<double> _matrix;
 	int _rows;
@@ -68,5 +107,13 @@ private:
 };
 
 
+/*
+Row iterator is an input (i.e., read-only) iterator.
+*/
+class row_iterator : public std::iterator<std::input_iterator_tag,
+	Matrix>
+{
+	
+};
 
 #endif

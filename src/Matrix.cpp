@@ -61,20 +61,34 @@ Matrix::Matrix(const Matrix &matrix) : _rows(matrix.rows()), _columns(matrix.col
 Overloads << so we can print a matrix.
 */
 std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
-	auto itr = (matrix._matrix).begin();
-	auto end = (matrix._matrix).end();
-	int j = 0; //counts the columns, so we can know when to end the line
+	
+	int j = 1; //counts the columns, so we can know when to end the line
 
-	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl;
-	for (; itr != end; ++itr) {
-		++j;
-		
+	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl << std::endl;
+
+	//loop invariant: j == column number of the entry being read
+	for (auto itr = matrix.begin(); itr != matrix.end(); ++itr) {
+		if (j == 1){
+			os << "[ " << *itr << ", ";
+			++j;
+			continue;
+		}
+
 		if ( j == matrix.columns() ) {
-			j = 0;
-			os << *itr << " ]" << std::endl << "[ ";
+			os << *itr << " ]" << std::endl;
+			j = 1;
 			continue;		
 		}
+
 		os << *itr << ", ";
+		++j;
+
+		//TODO: include padding to make reading easier. 
+		//First must implement a function that receives the matrix and finds out the number of digits of the largest entry.
+		//Then use it to see how much padding we should use.
+
+		//TODO: Maybe truncating the doubles is also a good idea.
+
 	}
 	return os;
 }
@@ -84,6 +98,43 @@ Overloads () to access an element [i,j] of the matrix.
 */
 double& Matrix::operator() (std::vector< std::vector<double> >::size_type i, std::vector<double>::size_type j) {
 	return _matrix[ (std::vector<double>::size_type)i * (std::vector<double>::size_type)_columns + j ];
+}
+
+/*
+Overloads * to multiply a matrix on the right by a vector.
+Returns a vector<double> of dimension equal to the number of rows of the matrix.
+If the matrix is empty, throws an invalid_argument error.
+If the dimension of the vector is different from the number of columns of the matrix,
+then it throws an invalid_argument error.
+*/
+std::vector<double> Matrix::operator* (std::vector<double> &vector){
+	if ( this->empty() )
+		throw std::invalid_argument("Matrix: the matrix must be non-empty.");
+
+	if ( vector.size() != (std::vector<double>::size_type)this->columns() )
+		throw std::invalid_argument("Matrix: the dimension of the vector must be the equal to the number of columns of the matrix.");
+
+	//output vector which we will grow in a loop
+	std::vector<double> ret;
+
+	//double to store the temporary value of the row's product
+	double sum = 0.0;
+
+	std::vector<double>::const_iterator vector_itr = vector.begin(); //const_iterator over vector
+
+	for (const_iterator matrix_itr = this->begin(); matrix_itr != this->end(); ++matrix_itr){
+		if ( vector_itr == vector.end() ) { //if we have calculated the product over a whole row
+			ret.push_back(sum);
+			vector_itr = vector.begin();
+			sum = (*matrix_itr) * (*vector_itr);
+		}
+
+		sum += (*matrix_itr) * (*vector_itr); 
+		++vector_itr;
+	}
+	ret.push_back(sum); //push_back the product of the last row
+	
+	return ret;
 }
 
 /*
@@ -98,4 +149,12 @@ Returns the number of columns of the matrix.
 */
 int Matrix::columns () const {
 	return _columns;
+}
+
+/*
+Returns the total number of entries in _matrix.
+*/
+std::vector<double>::size_type Matrix::size() const
+{
+	return _matrix.size();
 }
