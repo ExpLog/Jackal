@@ -54,18 +54,15 @@ Matrix::Matrix (int rows, int columns, double defaultValue = 0.0) {
 /*
 Copy constructor. Makes a deep copy of the input matrix.
 */
-Matrix::Matrix (const Matrix &matrix) { 
-	_rows( matrix.rows() );
-	_columns( matrix.columns() );
-	_matrix = std::vector<double>(matrix._matrix);
+Matrix::Matrix(const Matrix &matrix) : _rows(matrix.rows()), _columns(matrix.columns()), _matrix(std::vector<double>(matrix._matrix)){
 }
 
 /*
 Overloads << so we can print a matrix.
 */
 std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
-	const auto itr = (matrix._matrix).begin();
-	const auto end = (matrix._matrix).end();
+	auto itr = (matrix._matrix).begin();
+	auto end = (matrix._matrix).end();
 	int j = 0; //counts the columns, so we can know when to end the line
 
 	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl;
@@ -83,22 +80,22 @@ std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
 }
 
 /*
-Overloads [] to access an element [i,j] of the matrix.
+Overloads () to access an element [i,j] of the matrix.
 */
-double& operator[] (std::vector< std::vector<double> >::size_type i, std::vector<double>::size_type j) {
+double& Matrix::operator() (std::vector< std::vector<double> >::size_type i, std::vector<double>::size_type j) {
 	return _matrix[ (std::vector<double>::size_type)i * (std::vector<double>::size_type)_columns + j ];
 }
 
 /*
 Returns the number of rows of the matrix.
 */
-int Matrix::rows () {
+int Matrix::rows () const {
 	return _rows;
 }
 
 /*
 Returns the number of columns of the matrix.
 */
-int Matrix::columns () {
+int Matrix::columns () const {
 	return _columns;
 }
