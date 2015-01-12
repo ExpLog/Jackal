@@ -49,7 +49,7 @@ public:
 	/*
 	Overloads () to access an element [i,j] of the matrix.
 	*/
-	double& operator() (std::vector< std::vector<double> >::size_type, std::vector<double>::size_type);
+	double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
 
 	/*
 	Overloads * to multiply a matrix on the right by a vector.
@@ -73,26 +73,20 @@ public:
 	Returns true if the matrix is empty, false otherwise.
 	It is inlined to optimize performance.
 	*/
-	inline bool empty () const {
-		return _matrix.empty();
-	}
+	inline bool empty() const { return _matrix.empty(); }
 
 
 	/*
 	Returns a const iterator pointing to the beginning of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator begin () const {
-		return _matrix.begin();
-	}
+	inline const_iterator begin() const { return _matrix.begin(); }
 
 	/*
 	Returns a const iterator pointing to the element right after the end of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator end() const {
-		return _matrix.end();
-	}
+	inline const_iterator end() const { return _matrix.end(); }
 	
 private:
 	/*
@@ -110,9 +104,7 @@ private:
 /*
 Row iterator is an input (i.e., read-only) iterator.
 */
-class row_iterator : public std::iterator<std::input_iterator_tag,
-	Matrix>
-{
+class row_iterator : public std::iterator<std::input_iterator_tag, Matrix>{
 	
 };
 
