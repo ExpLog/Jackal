@@ -18,6 +18,7 @@ Matrix::Matrix (const std::vector< std::vector<double> > &matrix) {
 
 	_rows = matrix.size();
 	_columns = length;
+	_matrix.reserve(_rows*_columns);	//reserves needed space for the whole matrix
 
 	//copies the entries of the input into the private data structure
 	for (const auto &line : matrix) {
@@ -25,6 +26,7 @@ Matrix::Matrix (const std::vector< std::vector<double> > &matrix) {
 			_rows = 0;
 			_columns = 0;
 			_matrix = std::vector<double>();
+			_matrix.shrink_to_fit();	//shrinks the allocated capacity back to whatever is needed for an empty vector
 			throw std::invalid_argument("Matrix: All the rows in a matrix must have the same length.");
 		}
 		for (const auto &entry : line) {
@@ -116,6 +118,7 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 
 	//output vector which we will grow in a loop
 	std::vector<double> ret;
+	ret.reserve(vector.size());
 
 	//double to store the temporary value of the row's product
 	double sum = 0.0;

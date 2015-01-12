@@ -99,13 +99,4 @@ private:
 	int _rows;
 	int _columns;
 };
-
-
-/*
-Row iterator is an input (i.e., read-only) iterator.
-*/
-class row_iterator : public std::iterator<std::input_iterator_tag, Matrix>{
-	
-};
-
 #endif
