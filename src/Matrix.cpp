@@ -97,7 +97,7 @@ std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
 Overloads () to access an element [i,j] of the matrix.
 */
 double& Matrix::operator() (std::vector<double>::size_type i, std::vector<double>::size_type j) {
-	return _matrix[ (std::vector<double>::size_type)i * (std::vector<double>::size_type)_columns + j ];
+	return _matrix[ i * (std::vector<double>::size_type)_columns + j ];
 }
 
 /*
