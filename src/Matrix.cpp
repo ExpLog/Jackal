@@ -14,7 +14,7 @@ Matrix::Matrix (const std::vector< std::vector<double> > &matrix) {
 	}
 
 	//used to check if the input matrix has all rows of same size
-	std::vector< std::vector<double> >::size_type length = matrix[0].size();
+	std::vector<double>::size_type length = matrix[0].size();
 
 	_rows = matrix.size();
 	_columns = length;
@@ -56,7 +56,7 @@ Matrix::Matrix (int rows, int columns, double defaultValue = 0.0) {
 /*
 Copy constructor. Makes a deep copy of the input matrix.
 */
-Matrix::Matrix(const Matrix &matrix) : _rows(matrix.rows()), _columns(matrix.columns()), _matrix(std::vector<double>(matrix._matrix)){
+Matrix::Matrix (const Matrix &matrix) : _rows(matrix.rows()), _columns(matrix.columns()), _matrix(matrix._matrix){
 }
 
 /*
@@ -107,7 +107,7 @@ Overloads * to multiply a matrix on the right by a vector.
 Returns a vector<double> of dimension equal to the number of rows of the matrix.
 If the matrix is empty, throws an invalid_argument error.
 If the dimension of the vector is different from the number of columns of the matrix,
-then it throws an invalid_argument error.
+throws an invalid_argument error.
 */
 std::vector<double> Matrix::operator* (std::vector<double> &vector){
 	if ( this->empty() )
@@ -118,7 +118,7 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 
 	//output vector which we will grow in a loop
 	std::vector<double> ret;
-	ret.reserve(vector.size());
+	ret.reserve( (std::vector<double>::size_type) _rows);
 
 	//double to store the temporary value of the row's product
 	double sum = 0.0;
@@ -130,10 +130,12 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 			ret.push_back(sum);
 			vector_itr = vector.begin();
 			sum = (*matrix_itr) * (*vector_itr);
+			++vector_itr;
 		}
-
+		else{
 		sum += (*matrix_itr) * (*vector_itr); 
 		++vector_itr;
+		}
 	}
 	ret.push_back(sum); //push_back the product of the last row
 	
