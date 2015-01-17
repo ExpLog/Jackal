@@ -80,13 +80,29 @@ public:
 	Returns a const iterator pointing to the beginning of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator begin() const { return _matrix.begin(); }
+	inline const_iterator cbegin() const { return _matrix.cbegin(); }
+
+	/*
+	Returns an iterator pointing to the beginning of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline iterator begin() {
+		return _matrix.begin();
+	}
 
 	/*
 	Returns a const iterator pointing to the element right after the end of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator end() const { return _matrix.end(); }
+	inline const_iterator cend() const { return _matrix.cend(); }
+
+	/*
+	Returns an iterator pointing to the element right after the end of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline iterator end() {
+		return _matrix.end();
+	}
 	
 private:
 	/*
@@ -99,4 +115,5 @@ private:
 	int _rows;
 	int _columns;
 };
+
 #endif

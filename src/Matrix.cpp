@@ -163,3 +163,19 @@ std::vector<double>::size_type Matrix::size() const
 {
 	return _matrix.size();
 }
+
+
+/*
+Multiplies a scalar by a matrix on the right.
+Returns invalid_argument error if the matrix is empty.
+*/
+Matrix operator* (double scalar, Matrix matrix)	{
+
+	if (matrix.empty())
+		throw std::invalid_argument("Matrix: the matrix on the right must be non-empty.");
+	for (Matrix::iterator itr = matrix.begin(); itr != matrix.end(); itr++)
+	{
+		*itr = scalar * (*itr);
+	}
+	return matrix;
+}
