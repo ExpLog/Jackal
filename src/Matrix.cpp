@@ -179,3 +179,64 @@ Matrix operator* (double scalar, Matrix matrix)	{
 	}
 	return matrix;
 }
+
+/*
+Exchanges the rows row1 and row2. Expects both of them to be non-negative numbers.
+Returns invalid_argument error if one of them does not exists.
+*/
+void Matrix::exchangeRows (std::vector<double>::size_type row1, std::vector<double>::size_type row2) {
+	if ((row1 >= this->rows()) || (row2 >= this->rows())) //we used >= because row starts counting at zero.
+		throw std::invalid_argument("Matrix: both rows must exist.");
+
+	if (row1 == row2)
+		return; //saves time when the rows are the same.
+
+	double temp; //variable to store the temporary value of the entry being exchanged
+
+	//reads the rows from beginning to end and exchange the entries between themselves.
+	for (iterator itr1 = this->row_begin(row1), itr2 = this->row_begin(row2); itr1 != this->row_end(row1); ++itr1, ++itr2){
+		temp = *itr1;
+		*itr1 = *itr2;
+		*itr2 = temp;
+	}
+	return;
+}
+
+
+/*
+Multiplies a row by a double. Expects row to be a non-negative number.
+Returns invalid_argument error if row does not exists.
+*/
+void Matrix::multiplyRow(std::vector<double>::size_type row, double scalar){
+	if (row >= this->rows()) //we used >= because row starts counting at zero.
+		throw std::invalid_argument("Matrix: row must exist.");
+
+	for (iterator itr = this->row_begin(row); itr != this->row_end(row); ++itr){
+		*itr *= scalar;
+	}
+	return;
+}
+
+/*
+Sums (scalar * row1) to row2. It doesn't change the values at row1.
+Expects both rows to be non-negative integers.
+Returns invalid_argument error if one of the rows doesn't exist.
+*/
+void Matrix::linearCombination(std::vector<double>::size_type row1, double scalar, std::vector<double>::size_type row2){
+	if ((row1 >= this->rows()) || (row2 >= this->rows())) //we used >= because row starts counting at zero.
+		throw std::invalid_argument("Matrix: both rows must exist.");
+
+	if (scalar == 0){ //saves time
+		return;
+	}
+
+	if (row1 == row2){ //saves time and memory when the rows are the same.
+		this->multiplyRow(row2, scalar + 1);
+		return; 
+	}
+	
+	for (iterator itr1 = this->row_begin(row1), itr2 = this->row_end(row2); itr1 != row_end(row1); ++itr1, ++itr2){
+		*itr2 += scalar * (*itr1);
+	}
+	return;
+}

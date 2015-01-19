@@ -49,7 +49,7 @@ public:
 	/*
 	Overloads () to access an element [i,j] of the matrix.
 	*/
-	double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
+	inline double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
 
 	/*
 	Overloads * to multiply a matrix on the right by a vector.
@@ -62,25 +62,18 @@ public:
 	/*
 	Returns the number of rows of the matrix.
 	*/
-	int rows () const;
+	inline int rows () const;
 
 	/*
 	Returns the number of columns of the matrix.
 	*/
-	int columns () const;
+	inline int columns () const;
 
 	/*
 	Returns true if the matrix is empty, false otherwise.
 	It is inlined to optimize performance.
 	*/
 	inline bool empty() const { return _matrix.empty(); }
-
-
-	/*
-	Returns a const iterator pointing to the beginning of the matrix.
-	It is inlined to optimize performance.
-	*/
-	inline const_iterator cbegin() const { return _matrix.cbegin(); }
 
 	/*
 	Returns an iterator pointing to the beginning of the matrix.
@@ -91,18 +84,77 @@ public:
 	}
 
 	/*
-	Returns a const iterator pointing to the element right after the end of the matrix.
-	It is inlined to optimize performance.
-	*/
-	inline const_iterator cend() const { return _matrix.cend(); }
-
-	/*
 	Returns an iterator pointing to the element right after the end of the matrix.
 	It is inlined to optimize performance.
 	*/
 	inline iterator end() {
 		return _matrix.end();
 	}
+
+	/*
+	Returns a const iterator pointing to the beginning of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline const_iterator cbegin() const {
+		return _matrix.cbegin();
+	}
+
+	/*
+	Returns a const iterator pointing to the element right after the end of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline const_iterator cend() const { return _matrix.cend(); }
+
+	/*
+	Returns an iterator pointing to the beginning of the row "row" of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline iterator row_begin (std::vector<double>::size_type row) {
+		return this->begin() + row * (std::vector<double>::size_type) this->columns();
+	}
+
+	/*
+	Returns an iterator pointing to the element right after the end of the row "row" of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline iterator row_end (std::vector<double>::size_type row) {
+		return this->begin() + (row + 1) * (std::vector<double>::size_type) this->columns();
+	}
+
+	/*
+	Returns a const iterator pointing to the beginning of the row "row" of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline const_iterator row_cbegin (std::vector<double>::size_type row) const {
+		return this->cbegin() + row * (std::vector<double>::size_type) this->columns();
+	}
+
+	/*
+	Returns a const iterator pointing to the element right after the end of the row "row" of the matrix.
+	It is inlined to optimize performance.
+	*/
+	inline const_iterator row_cend (std::vector<double>::size_type row) const {
+		return this->cbegin() + (row + 1) * (std::vector<double>::size_type) this->columns();
+	}
+
+	/*
+	Exchanges the rows row1 and row2. Expects both of them to be non-negative integers.
+	Returns invalid_argument error if one of them does not exists.
+	*/
+	void exchangeRows (std::vector<double>::size_type, std::vector<double>::size_type);
+
+	/*
+	Multiplies a row by a double. Expects row to be a non-negative integer.
+	Returns invalid_argument error if row does not exists.
+	*/
+	void multiplyRow(std::vector<double>::size_type, double);
+
+	/*
+	Sums (scalar * row1) to row2. It doesn't change the values at row1.
+	Expects both rows to be non-negative integers.
+	Returns invalid_argument error if one of the rows doesn't exist.
+	*/
+	void linearCombination(std::vector<double>::size_type, double, std::vector<double>::size_type);
 	
 private:
 	/*
