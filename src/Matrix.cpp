@@ -1,6 +1,7 @@
-#include <iostream>
-#include <stdexcept>
-#include <vector>
+#include <iostream> //used std::ostream
+#include <stdexcept> //used std::invalid_arguments errors
+#include <utility> //used std::pair
+#include <vector> //used in the implementation of Matrix class
 #include "matrix.h"
 
 /*
@@ -69,7 +70,7 @@ std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
 	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl << std::endl;
 
 	//loop invariant: j == column number of the entry being read
-	for (auto itr = matrix.begin(); itr != matrix.end(); ++itr) {
+	for (auto itr = matrix.cbegin(); itr != matrix.cend(); ++itr) {
 		if (j == 1){
 			os << "[ " << *itr << ", ";
 			++j;
@@ -185,7 +186,7 @@ Exchanges the rows row1 and row2. Expects both of them to be non-negative number
 Returns invalid_argument error if one of them does not exists.
 */
 void Matrix::exchangeRows (std::vector<double>::size_type row1, std::vector<double>::size_type row2) {
-	if ((row1 >= this->rows()) || (row2 >= this->rows())) //we used >= because row starts counting at zero.
+	if ((row1 >= (std::vector<double>::size_type) this->rows()) || (row2 >= (std::vector<double>::size_type) this->rows())) //we used >= because row starts counting at zero.
 		throw std::invalid_argument("Matrix: both rows must exist.");
 
 	if (row1 == row2)
@@ -208,7 +209,7 @@ Multiplies a row by a double. Expects row to be a non-negative number.
 Returns invalid_argument error if row does not exists.
 */
 void Matrix::multiplyRow(std::vector<double>::size_type row, double scalar){
-	if (row >= this->rows()) //we used >= because row starts counting at zero.
+	if (row >= (std::vector<double>::size_type) this->rows()) //we used >= because row starts counting at zero.
 		throw std::invalid_argument("Matrix: row must exist.");
 
 	for (iterator itr = this->row_begin(row); itr != this->row_end(row); ++itr){
@@ -223,7 +224,7 @@ Expects both rows to be non-negative integers.
 Returns invalid_argument error if one of the rows doesn't exist.
 */
 void Matrix::linearCombination(std::vector<double>::size_type row1, double scalar, std::vector<double>::size_type row2){
-	if ((row1 >= this->rows()) || (row2 >= this->rows())) //we used >= because row starts counting at zero.
+	if ((row1 >= (std::vector<double>::size_type) this->rows()) || (row2 >= (std::vector<double>::size_type) this->rows())) //we used >= because row starts counting at zero.
 		throw std::invalid_argument("Matrix: both rows must exist.");
 
 	if (scalar == 0){ //saves time

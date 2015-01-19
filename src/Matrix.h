@@ -1,8 +1,9 @@
 #ifndef GUARD_Matrix_h
 #define GUARD_Matrix_h
 
-#include <iostream>
-#include <vector>
+#include <iostream>  //used std::ostream
+#include <utility> //use std::pair
+#include <vector> //used in the implementation of Matrix class
 
 class Matrix {
 public:
@@ -135,6 +136,24 @@ public:
 	*/
 	inline const_iterator row_cend (std::vector<double>::size_type row) const {
 		return this->cbegin() + (row + 1) * (std::vector<double>::size_type) this->columns();
+	}
+
+	/*
+	Returns a pair with the iterators returned by row_begin and row_end. 
+	Returning a pair avoids calling row_begin and row_end with different arguments and comparing them.
+	It is inlined to optimize performance.
+	*/
+	inline std::pair<iterator,iterator> row_itr_pair(std::vector<double>::size_type row) {
+		return std::make_pair<iterator,iterator>(this->row_begin(row), this->row_end(row));
+	}
+
+	/*
+	Returns a pair with the const_iterators returned by row_cbegin and row_cend.
+	Returning a pair avoids calling row_begin and row_end with different arguments and comparing them.
+	It is inlined to optimize performance.
+	*/
+	inline std::pair<const_iterator, const_iterator> row_citr_pair(std::vector<double>::size_type row) {
+		return std::make_pair<const_iterator, const_iterator>( this->row_cbegin(row), this->row_cend(row) );
 	}
 
 	/*
