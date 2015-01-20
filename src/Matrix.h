@@ -1,9 +1,9 @@
 #ifndef GUARD_Matrix_h
 #define GUARD_Matrix_h
 
-#include <iostream>  //used std::ostream
-#include <utility> //use std::pair
-#include <vector> //used in the implementation of Matrix class
+#include <iostream>	//used std::ostream
+#include <utility>	//use std::pair
+#include <vector>	//used in the implementation of Matrix class
 
 class Matrix {
 public:
@@ -143,7 +143,7 @@ public:
 	Returning a pair avoids calling row_begin and row_end with different arguments and comparing them.
 	It is inlined to optimize performance.
 	*/
-	inline std::pair<iterator,iterator> row_itr_pair(std::vector<double>::size_type row) {
+	inline std::pair<iterator,iterator> row_itr(std::vector<double>::size_type row) {
 		return std::make_pair<iterator,iterator>(this->row_begin(row), this->row_end(row));
 	}
 
@@ -152,7 +152,7 @@ public:
 	Returning a pair avoids calling row_begin and row_end with different arguments and comparing them.
 	It is inlined to optimize performance.
 	*/
-	inline std::pair<const_iterator, const_iterator> row_citr_pair(std::vector<double>::size_type row) {
+	inline std::pair<const_iterator, const_iterator> row_citr(std::vector<double>::size_type row) {
 		return std::make_pair<const_iterator, const_iterator>( this->row_cbegin(row), this->row_cend(row) );
 	}
 
@@ -186,5 +186,7 @@ private:
 	int _rows;
 	int _columns;
 };
+
+std::ostream& operator<< (std::ostream&, const Matrix&);
 
 #endif

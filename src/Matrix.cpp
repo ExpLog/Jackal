@@ -1,7 +1,7 @@
-#include <iostream> //used std::ostream
-#include <stdexcept> //used std::invalid_arguments errors
-#include <utility> //used std::pair
-#include <vector> //used in the implementation of Matrix class
+#include <iostream>		//used std::ostream
+#include <stdexcept>	//used std::invalid_arguments errors
+#include <utility>		//used std::pair
+#include <vector>		//used in the implementation of Matrix class
 #include "matrix.h"
 
 /*
@@ -63,11 +63,11 @@ Matrix::Matrix (const Matrix &matrix) : _rows(matrix.rows()), _columns(matrix.co
 /*
 Overloads << so we can print a matrix.
 */
-std::ostream& operator<< (std::ostream& os, const Matrix &matrix) {
+std::ostream& operator<< (std::ostream& os, const Matrix& matrix) {
 	
 	int j = 1; //counts the columns, so we can know when to end the line
 
-	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl << std::endl;
+	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl;
 
 	//loop invariant: j == column number of the entry being read
 	for (auto itr = matrix.cbegin(); itr != matrix.cend(); ++itr) {
@@ -122,24 +122,26 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 	ret.reserve( (std::vector<double>::size_type) _rows);
 
 	//double to store the temporary value of the row's product
-	double sum = 0.0;
+	double sum;
 
-	std::vector<double>::const_iterator vector_itr = vector.begin(); //const_iterator over vector
+	//vector and row iterators
+	std::vector<double>::const_iterator vec_iter, vec_end;
+	const_iterator row_iter, row_end;
+	vec_end = vector.cend();
 
-	for (const_iterator matrix_itr = this->begin(); matrix_itr != this->end(); ++matrix_itr){
-		if ( vector_itr == vector.end() ) { //if we have calculated the product over a whole row
-			ret.push_back(sum);
-			vector_itr = vector.begin();
-			sum = (*matrix_itr) * (*vector_itr);
-			++vector_itr;
+	for (int i = 0; i != _rows; ++i){
+		vec_iter = vector.cbegin();
+		row_iter = this->row_cbegin(i);
+		row_end = this->row_cend(i);
+		sum = 0.0;
+		//it is not necessary to check vec_iter because
+		//we are guaranteed that row_iter and vec_iter will iterate over the same number of elements 
+		for (; row_iter != row_end; ++row_iter, ++vec_iter){
+			sum += (*row_iter)*(*vec_iter);
 		}
-		else{
-		sum += (*matrix_itr) * (*vector_itr); 
-		++vector_itr;
-		}
+		ret.push_back(sum);
 	}
-	ret.push_back(sum); //push_back the product of the last row
-	
+
 	return ret;
 }
 
@@ -168,7 +170,7 @@ std::vector<double>::size_type Matrix::size() const
 
 /*
 Multiplies a scalar by a matrix on the right.
-Returns invalid_argument error if the matrix is empty.
+Throws invalid_argument error if the matrix is empty.
 */
 Matrix operator* (double scalar, Matrix matrix)	{
 
