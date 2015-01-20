@@ -50,7 +50,8 @@ public:
 	/*
 	Overloads () to access an element [i,j] of the matrix.
 	*/
-	inline double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
+	double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
+	const double& operator() (std::vector<double>::size_type, std::vector<double>::size_type) const;
 
 	/*
 	Overloads * to multiply a matrix on the right by a vector.

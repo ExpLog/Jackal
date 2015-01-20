@@ -2,7 +2,7 @@
 #include <stdexcept>	//used std::invalid_arguments errors
 #include <utility>		//used std::pair
 #include <vector>		//used in the implementation of Matrix class
-#include "matrix.h"
+#include "Matrix.h"
 
 /*
 Initializes a Matrix by copying from a vector of vector of doubles.
@@ -103,6 +103,13 @@ double& Matrix::operator() (std::vector<double>::size_type i, std::vector<double
 	return _matrix[ i * (std::vector<double>::size_type)_columns + j ];
 }
 
+const double& Matrix::operator() (
+	std::vector<double>::size_type i,
+	std::vector<double>::size_type j) const {
+	return _matrix[i * (std::vector<double>::size_type)_columns + j];
+}
+
+
 /*
 Overloads * to multiply a matrix on the right by a vector.
 Returns a vector<double> of dimension equal to the number of rows of the matrix.
@@ -172,7 +179,7 @@ std::vector<double>::size_type Matrix::size() const
 Multiplies a scalar by a matrix on the right.
 Throws invalid_argument error if the matrix is empty.
 */
-Matrix operator* (double scalar, Matrix matrix)	{
+Matrix operator* (double scalar, Matrix matrix){
 
 	if (matrix.empty())
 		throw std::invalid_argument("Matrix: the matrix on the right must be non-empty.");
