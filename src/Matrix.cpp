@@ -57,7 +57,7 @@ Matrix::Matrix (int rows, int columns, double defaultValue = 0.0) {
 /*
 Copy constructor. Makes a deep copy of the input matrix.
 */
-Matrix::Matrix (const Matrix &matrix) : _rows(matrix.rows()), _columns(matrix.columns()), _matrix(matrix._matrix){
+Matrix::Matrix (const Matrix &matrix) : _matrix(matrix._matrix), _rows(matrix.rows()), _columns(matrix.columns()){
 }
 
 /*
@@ -132,9 +132,8 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 	double sum;
 
 	//vector and row iterators
-	std::vector<double>::const_iterator vec_iter, vec_end;
+	std::vector<double>::const_iterator vec_iter;
 	const_iterator row_iter, row_end;
-	vec_end = vector.cend();
 
 	for (int i = 0; i != _rows; ++i){
 		vec_iter = vector.cbegin();
@@ -183,7 +182,7 @@ Matrix operator* (double scalar, Matrix matrix){
 
 	if (matrix.empty())
 		throw std::invalid_argument("Matrix: the matrix on the right must be non-empty.");
-	for (Matrix::iterator itr = matrix.begin(); itr != matrix.end(); itr++)
+	for (Matrix::iterator itr = matrix.begin(); itr != matrix.end(); ++itr)
 	{
 		*itr = scalar * (*itr);
 	}
