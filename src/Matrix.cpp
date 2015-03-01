@@ -166,15 +166,6 @@ unsigned Matrix::columns() const {
 }
 
 /*
-Returns the total number of entries in _matrix.
-*/
-std::vector<double>::size_type Matrix::size() const
-{
-	return _matrix.size();
-}
-
-
-/*
 Multiplies a scalar by a matrix on the right.
 Throws invalid_argument error if the matrix is empty.
 */
@@ -182,13 +173,16 @@ Matrix operator* (double scalar, Matrix matrix){
 
 	if (matrix.empty())
 		throw std::invalid_argument("Matrix: the matrix on the right must be non-empty.");
+
 	for (Matrix::iterator itr = matrix.begin(); itr != matrix.end(); ++itr)
 	{
-		*itr = scalar * (*itr);
+		*itr *= scalar;
 	}
 	return matrix;
 }
 
+
+//elementary row operations
 /*
 Exchanges the rows row1 and row2. Expects both of them to be non-negative numbers.
 Returns invalid_argument error if one of them does not exists.

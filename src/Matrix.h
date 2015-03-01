@@ -186,7 +186,9 @@ private:
 	/*
 	Returns the total number of entries in _matrix.
 	*/
-	std::vector<double>::size_type size() const;
+	std::vector<double>::size_type size() const {
+		return _matrix.size();
+	}
 
 	//data structures
 	std::vector<double> _matrix;
