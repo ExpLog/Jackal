@@ -2,7 +2,7 @@
 #define GUARD_Matrix_h
 
 #include <iostream>	//used std::ostream
-#include <utility>	//use std::pair
+#include <utility>	//used std::pair
 #include <vector>	//used in the implementation of Matrix class
 
 class Matrix {
@@ -10,7 +10,6 @@ public:
 
 	/*
 	The typedefs below create the interface for matrix iterators.
-	They are input (i.e., read-only) iterators.
 	Goes through one row at a time 
 	(e.g.: starts at the first row, reads all elements in it; then goes to the beginning of the second row, and so on).
 	*/
@@ -39,7 +38,7 @@ public:
 	If no defaultValue is passed to the function, it initializes the matrix
 	with 0.0 in all entries.
 	*/
-	Matrix (int, int, double);
+	Matrix (unsigned, unsigned, double);
 
 	/*
 	Copy constructor. Makes a deep copy of the input matrix.
@@ -49,9 +48,10 @@ public:
 
 	/*
 	Overloads () to access an element [i,j] of the matrix.
+	It is inlined to optimize performance.
 	*/
-	double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
-	const double& operator() (std::vector<double>::size_type, std::vector<double>::size_type) const;
+	inline double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
+	inline const double& operator() (std::vector<double>::size_type, std::vector<double>::size_type) const;
 
 	/*
 	Overloads * to multiply a matrix on the right by a vector.
@@ -63,25 +63,29 @@ public:
 
 	/*
 	Returns the number of rows of the matrix.
+	It is inlined to optimize performance.
 	*/
-	inline int rows () const;
+	inline unsigned rows () const;
 
 	/*
 	Returns the number of columns of the matrix.
+	It is inlined to optimize performance.
 	*/
-	inline int columns () const;
+	inline unsigned columns() const;
 
 	/*
 	Returns true if the matrix is empty, false otherwise.
 	It is inlined to optimize performance.
 	*/
-	inline bool empty() const { return _matrix.empty(); }
+	bool empty() const { return _matrix.empty(); }
 
+
+	//iterators
 	/*
 	Returns an iterator pointing to the beginning of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline iterator begin() {
+	iterator begin() {
 		return _matrix.begin();
 	}
 
@@ -89,7 +93,7 @@ public:
 	Returns an iterator pointing to the element right after the end of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline iterator end() {
+	iterator end() {
 		return _matrix.end();
 	}
 
@@ -97,7 +101,7 @@ public:
 	Returns a const iterator pointing to the beginning of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator cbegin() const {
+	const_iterator cbegin() const {
 		return _matrix.cbegin();
 	}
 
@@ -105,13 +109,13 @@ public:
 	Returns a const iterator pointing to the element right after the end of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator cend() const { return _matrix.cend(); }
+	const_iterator cend() const { return _matrix.cend(); }
 
 	/*
 	Returns an iterator pointing to the beginning of the row "row" of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline iterator row_begin (std::vector<double>::size_type row) {
+	iterator row_begin (std::vector<double>::size_type row) {
 		return this->begin() + row * (std::vector<double>::size_type) this->columns();
 	}
 
@@ -119,7 +123,7 @@ public:
 	Returns an iterator pointing to the element right after the end of the row "row" of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline iterator row_end (std::vector<double>::size_type row) {
+	iterator row_end (std::vector<double>::size_type row) {
 		return this->begin() + (row + 1) * (std::vector<double>::size_type) this->columns();
 	}
 
@@ -127,7 +131,7 @@ public:
 	Returns a const iterator pointing to the beginning of the row "row" of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator row_cbegin (std::vector<double>::size_type row) const {
+	const_iterator row_cbegin (std::vector<double>::size_type row) const {
 		return this->cbegin() + row * (std::vector<double>::size_type) this->columns();
 	}
 
@@ -135,7 +139,7 @@ public:
 	Returns a const iterator pointing to the element right after the end of the row "row" of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const_iterator row_cend (std::vector<double>::size_type row) const {
+	const_iterator row_cend (std::vector<double>::size_type row) const {
 		return this->cbegin() + (row + 1) * (std::vector<double>::size_type) this->columns();
 	}
 
@@ -144,7 +148,7 @@ public:
 	Returning a pair avoids calling row_begin and row_end with different arguments and comparing them.
 	It is inlined to optimize performance.
 	*/
-	inline std::pair<iterator,iterator> row_itr(std::vector<double>::size_type row) {
+	std::pair<iterator,iterator> row_itr(std::vector<double>::size_type row) {
 		return std::make_pair<iterator,iterator>(this->row_begin(row), this->row_end(row));
 	}
 
@@ -153,10 +157,12 @@ public:
 	Returning a pair avoids calling row_begin and row_end with different arguments and comparing them.
 	It is inlined to optimize performance.
 	*/
-	inline std::pair<const_iterator, const_iterator> row_citr(std::vector<double>::size_type row) {
+	std::pair<const_iterator, const_iterator> row_citr(std::vector<double>::size_type row) {
 		return std::make_pair<const_iterator, const_iterator>( this->row_cbegin(row), this->row_cend(row) );
 	}
 
+
+	//elementary row operations
 	/*
 	Exchanges the rows row1 and row2. Expects both of them to be non-negative integers.
 	Returns invalid_argument error if one of them does not exists.
@@ -184,8 +190,8 @@ private:
 
 	//data structures
 	std::vector<double> _matrix;
-	int _rows;
-	int _columns;
+	unsigned _rows;
+	unsigned _columns;
 };
 
 std::ostream& operator<< (std::ostream&, const Matrix&);

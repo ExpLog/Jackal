@@ -7,7 +7,7 @@
 Decomposes matrix A into A = LU where L is lower triangular and U is upper triangular.
 Returns a std::pair<Matrix,Matrix> = pair(L,U)
 Note that this function might permutate the rows of A if necessary.
-Throws an invalid_argument if matrix dimensions are equal or A isn't square.
+Throws an invalid_argument if matrix dimensions are nonpositive or A isn't square.
 Still a simple implementation.
 */
 std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
@@ -20,9 +20,9 @@ std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
 	lu.first = Matrix(A.rows(), A.columns(), 0.0);	//L
 	lu.second = Matrix(A.rows(), A.columns(), 0.0);	//U
 
-	int i, k, max_idx;
+	unsigned i, k, max_idx;
 	double max;
-	for (int j = 0; j < A.rows(); ++j){
+	for (unsigned j = 0; j < A.rows(); ++j){
 		//we want to pivot matrix A, that is exchange the current row j
 		//with the row k>j that has the greatest entry in column j
 		max_idx = j;
