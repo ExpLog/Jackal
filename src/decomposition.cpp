@@ -1,5 +1,6 @@
-//#include <limits>
-#include <stdexcept>
+#include <cfloat>		//used std::DBL_EPSILON
+#include <stdexcept>	//used std::invalid_argument
+#include <utility>		//used std::pair and std::make_pair
 #include "Matrix.h"
 #include "decomposition.h"
 
@@ -7,58 +8,71 @@
 Decomposes matrix A into A = LU where L is lower triangular and U is upper triangular.
 Returns a std::pair<Matrix,Matrix> = pair(L,U)
 Note that this function might permutate the rows of A if necessary.
-Throws an invalid_argument if matrix dimensions are nonpositive or A isn't square.
+Throws an invalid_argument if at least one of the matrix dimensions is zero or if A isn't square.
+Throws domain_error if the matrix cannot be decomposed in LU.
 Still a simple implementation.
 */
 std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
-	if (A.rows() < 0 || A.columns() < 0)
-		throw std::invalid_argument("lu_decomp: A must have positive dimensions.");
+	if (!A.rows() || !A.columns())
+		throw std::invalid_argument("lu_decomp: the matrix must have positive dimensions.");
 	if (A.rows() != A.columns())
-		throw std::invalid_argument("lu_decomp: matrix must be square.");
+		throw std::invalid_argument("lu_decomp: the matrix must be square.");
 
-	std::pair<Matrix, Matrix> lu;
-	lu.first = Matrix(A.rows(), A.columns(), 0.0);	//L
-	lu.second = Matrix(A.rows(), A.columns(), 0.0);	//U
+	const unsigned dimension = A.rows();
+	L = Matrix(A.rows(), A.columns(), 0.0);
+	for (unsigned index = 0; index < dimension; ++i) {
+		L(i, i) = 1.0;
+	}
+	U = Matrix(A.rows(), A.columns(), 0.0);
 
-	unsigned i, k, max_idx;
-	double max;
-	for (unsigned j = 0; j < A.rows(); ++j){
-		//we want to pivot matrix A, that is exchange the current row j
+	// Variables used in the loop below. They are defined outside the loop to avoid creating and
+	// destroying them at every iteration.
+	// i will be the looping variable used in the inner loops.
+	// k will be an index used in a matrix multiplication inside the second inner the loop
+	// max_index will hold the index of the row with the current greatest entry in column j
+	//(as long as it is greater than j).
+	// max_entry will be the largest entry in the column j.
+	unsigned i, k, max_index;
+	double max_entry;
+
+	for (unsigned j = 0; j < dimension; ++j){
+		//we want to pivot matrix A, that is, exchange the current row j
 		//with the row k>j that has the greatest entry in column j
-		max_idx = j;
-		max = A(j, j);
-		for (k = j + 1; k < A.rows(); ++k){
-			if (max < A(k, j)){
-				max = A(k, j);
-				max_idx = k;
+		max_index = j;
+		max_entry = A(j, j);
+		for (k = j + 1; k < dimension; ++k){
+			if (max_entry < A(k, j)){
+				max_entry = A(k, j);
+				max_index = k;
 			}
 		}
-		if (abs(max) < DBL_EPSILON)
-			throw std::domain_error("lu_decomp: A cannot be decomposed into LU.");
+		if (abs(max) < std::DBL_EPSILON)
+			throw std::domain_error("lu_decomp: A cannot be decomposed into LU. The matrix is not diagonizable or its entries are too small.");
 
 		A.exchangeRows(max_idx, j);
-		lu.first.exchangeRows(max_idx, j);
-		//lu.second.exchangeRows(max_idx, k);
+		L.exchangeRows(max_idx, j);
 
-		lu.second(0, j) = A(0, j);	//U(0,j) = A(0,j), always
+		U(0, j) = A(0, j);	//U(0,j) = A(0,j), always!
 		for (i = 1; i <= j; ++i){	//these two nested loops are performing U(i,j) = A(i,j) - \sum_{k=0}^{j-1} L(j,k)U(k,j)
-			lu.second(i, j) = A(i, j);
-			double *entry = &lu.second(i, j);
+			double *entry = &U(i, j);
+			*entry = A(i, j);
 			for (k = 0; k <= j - 1; ++k){
-				*entry -= lu.first(i, k)*lu.second(k, j);
+				*entry -= L(i, k) * U(k, j);
 			}
 		}
 
-		lu.first(j, j) = 1.0;
-		for (i = j + 1; i < A.rows(); ++i){	//this continues from where the other loop left off
-			lu.first(i, j) = A(i, j);
-			double *entry = &lu.first(i, j);
+		L(j, j) = 1.0;
+		// let's define the variable quotient below so that U(j, j) is not calculated in every iteration of the loop below.
+		double quocient = U(j, j) // it is never zero because U(j,j) = A(j,j) which is non-zero (otherwise would have thrown above).
+		for (i = j + 1; i < dimension; ++i){	//this continues from where the other loop left off
+			double *entry = &L(i, j);
+			*entry = A(i, j);
 			for (k = 0; k <= j - 1; ++k){
-				*entry -= lu.first(i, k)*lu.second(k, j);
+				*entry -= L(i, k) * U(k, j);
 			}
-			*entry = *entry / lu.second(j, j);
+			*entry = *entry / quocient;
 		}
 	}
-
-	return lu;
+	return std::make_pair(L, U);
+	//TODO: correct mistakes in algorithm.
 }

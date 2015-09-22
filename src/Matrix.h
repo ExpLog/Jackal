@@ -1,7 +1,7 @@
 #ifndef GUARD_Matrix_h
 #define GUARD_Matrix_h
 
-#include <iostream>	//used std::ostream
+#include <ostream>	//used std::ostream
 #include <utility>	//used std::pair
 #include <vector>	//used in the implementation of Matrix class
 
@@ -10,8 +10,8 @@ public:
 
 	/*
 	The typedefs below create the interface for matrix iterators.
-	Goes through one row at a time 
-	(e.g.: starts at the first row, reads all elements in it; then goes to the beginning of the second row, and so on).
+	It goes through one row at a time (e.g.: starts at the first row, reads all elements in it;
+	then goes to the beginning of the second row, and so on).
 	*/
 	typedef std::vector<double>::iterator iterator;
 	typedef std::vector<double>::const_iterator const_iterator;
@@ -19,22 +19,19 @@ public:
 	//constructors
 
 	/*
-	Default constructor, not to be used. 
-	If it is, we value initialize the int variables, otherwise they would have garbage in them.
-	This may avoid future bugs.
+	We do not define a default constructor on purpose. 
 	*/
-	Matrix(): _rows(0), _columns(0) {}
 
 	/*
 	Initializes a Matrix by copying from a vector of vector of doubles.
 	Expects the vector< vector<double> > to be non-empty.
-	This constructor can be used to cast.
+	This constructor *can* be used to cast.
 	*/
 	Matrix (const std::vector< std::vector<double> >&);
 
 	/*
 	Initializes a Matrix of dimensions rows x columns with the defaultValue.
-	Expects rows and columns to be positive integers. 
+	Expects rows and columns to be (unsigned and) positive. 
 	If no defaultValue is passed to the function, it initializes the matrix
 	with 0.0 in all entries.
 	*/
@@ -47,17 +44,22 @@ public:
 	//end of constructors
 
 	/*
-	Overloads () to access an element [i,j] of the matrix.
+	Overloads << so we can print a matrix.
+	*/
+	std::ostream& operator<< (std::ostream&, const Matrix&);
+
+	/*
+	Overloads () to access an element [i,j] of the matrix. Start counting at 0.
 	It is inlined to optimize performance.
 	*/
-	inline double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
 	inline const double& operator() (std::vector<double>::size_type, std::vector<double>::size_type) const;
-
+	inline double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
+	
 	/*
 	Overloads * to multiply a matrix on the right by a vector.
 	Returns a vector<double> of dimension equal to the number of rows of the matrix.
 	If the dimension of the vector is different from the number of columns of the matrix,
-	then it returns a ValueError.
+	then it throws a ValueError.
 	*/
 	std::vector<double> operator* (std::vector<double>&);
 
@@ -65,13 +67,13 @@ public:
 	Returns the number of rows of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline unsigned rows () const;
+	inline const unsigned rows () const;
 
 	/*
 	Returns the number of columns of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline unsigned columns() const;
+	inline const unsigned columns() const;
 
 	/*
 	Returns true if the matrix is empty, false otherwise.
@@ -109,14 +111,16 @@ public:
 	Returns a const iterator pointing to the element right after the end of the matrix.
 	It is inlined to optimize performance.
 	*/
-	const_iterator cend() const { return _matrix.cend(); }
+	const_iterator cend() const { 
+		return _matrix.cend();
+	}
 
 	/*
 	Returns an iterator pointing to the beginning of the row "row" of the matrix.
 	It is inlined to optimize performance.
 	*/
 	iterator row_begin (std::vector<double>::size_type row) {
-		return this->begin() + row * (std::vector<double>::size_type) this->columns();
+		return this->begin() + row * static_cast<std::vector<double>::size_type>(this->columns());
 	}
 
 	/*
@@ -124,7 +128,7 @@ public:
 	It is inlined to optimize performance.
 	*/
 	iterator row_end (std::vector<double>::size_type row) {
-		return this->begin() + (row + 1) * (std::vector<double>::size_type) this->columns();
+		return this->begin() + (row + 1) * static_cast<std::vector<double>::size_type>(this->columns());
 	}
 
 	/*
@@ -132,7 +136,7 @@ public:
 	It is inlined to optimize performance.
 	*/
 	const_iterator row_cbegin (std::vector<double>::size_type row) const {
-		return this->cbegin() + row * (std::vector<double>::size_type) this->columns();
+		return this->cbegin() + row * static_cast<std::vector<double>::size_type>(this->columns());
 	}
 
 	/*
@@ -140,7 +144,7 @@ public:
 	It is inlined to optimize performance.
 	*/
 	const_iterator row_cend (std::vector<double>::size_type row) const {
-		return this->cbegin() + (row + 1) * (std::vector<double>::size_type) this->columns();
+		return this->cbegin() + (row + 1) * static_cast<std::vector<double>::size_type>(this->columns());
 	}
 
 	/*
@@ -164,24 +168,25 @@ public:
 
 	//elementary row operations
 	/*
-	Exchanges the rows row1 and row2. Expects both of them to be non-negative integers.
-	Returns invalid_argument error if one of them does not exists.
+	Exchanges the rows row1 and row2.
+	Returns invalid_argument error if one of them does not exist, or *this if successful.
 	*/
-	void exchangeRows (std::vector<double>::size_type, std::vector<double>::size_type);
+	Matrix exchangeRows (std::vector<double>::size_type, std::vector<double>::size_type);
 
 	/*
-	Multiplies a row by a double. Expects row to be a non-negative integer.
-	Returns invalid_argument error if row does not exists.
+	Multiplies a row by a double.
+	Returns invalid_argument error if row does not exists, or *this if successful.
 	*/
-	void multiplyRow(std::vector<double>::size_type, double);
+	Matrix multiplyRow(std::vector<double>::size_type, double);
 
 	/*
 	Sums (scalar * row1) to row2. It doesn't change the values at row1.
-	Expects both rows to be non-negative integers.
-	Returns invalid_argument error if one of the rows doesn't exist.
+	Returns invalid_argument error if one of the rows doesn't exist, or *this if successful.
 	*/
-	void linearCombination(std::vector<double>::size_type, double, std::vector<double>::size_type);
+	Matrix linearCombination(double, std::vector<double>::size_type, std::vector<double>::size_type);
 	
+	// TODO: implement a swap function
+
 private:
 	/*
 	Returns the total number of entries in _matrix.
@@ -194,8 +199,10 @@ private:
 	std::vector<double> _matrix;
 	unsigned _rows;
 	unsigned _columns;
+	// TODO: make _rows and _columns unsigned long long or even size_t?
+	// TODO: maybe create another atribute to hold the number of digits of the largest entry.
+	// This can make printing easier by padding. Also implement a function that receives the
+	// matrix as argument and finds out the number of digits of the largest entry.
 };
-
-std::ostream& operator<< (std::ostream&, const Matrix&);
 
 #endif
