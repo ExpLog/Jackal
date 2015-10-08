@@ -19,11 +19,11 @@ std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
 		throw std::invalid_argument("lu_decomp: the matrix must be square.");
 
 	const unsigned dimension = A.rows();
-	L = Matrix(A.rows(), A.columns(), 0.0);
-	for (unsigned index = 0; index < dimension; ++i) {
+	Matrix L(A.rows(), A.columns(), 0.0);
+	for (unsigned i = 0; i < dimension; ++i) {
 		L(i, i) = 1.0;
 	}
-	U = Matrix(A.rows(), A.columns(), 0.0);
+	Matrix U(A.rows(), A.columns(), 0.0);
 
 	// Variables used in the loop below. They are defined outside the loop to avoid creating and
 	// destroying them at every iteration.
@@ -46,11 +46,11 @@ std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
 				max_index = k;
 			}
 		}
-		if (abs(max) < std::DBL_EPSILON)
+		if (abs(max_entry) < DBL_EPSILON)
 			throw std::domain_error("lu_decomp: A cannot be decomposed into LU. The matrix is not diagonizable or its entries are too small.");
 
-		A.exchangeRows(max_idx, j);
-		L.exchangeRows(max_idx, j);
+		A.exchangeRows(max_index, j);
+		L.exchangeRows(max_index, j);
 
 		U(0, j) = A(0, j);	//U(0,j) = A(0,j), always!
 		for (i = 1; i <= j; ++i){	//these two nested loops are performing U(i,j) = A(i,j) - \sum_{k=0}^{j-1} L(j,k)U(k,j)
@@ -63,7 +63,7 @@ std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
 
 		L(j, j) = 1.0;
 		// let's define the variable quotient below so that U(j, j) is not calculated in every iteration of the loop below.
-		double quocient = U(j, j) // it is never zero because U(j,j) = A(j,j) which is non-zero (otherwise would have thrown above).
+		double quocient = U(j, j); // it is never zero because U(j,j) = A(j,j) which is non-zero (otherwise would have thrown above).
 		for (i = j + 1; i < dimension; ++i){	//this continues from where the other loop left off
 			double *entry = &L(i, j);
 			*entry = A(i, j);

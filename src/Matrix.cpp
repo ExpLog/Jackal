@@ -3,7 +3,7 @@
 #include <stdexcept>	//used std::invalid_arguments errors
 #include <utility>		//used std::pair and std::swap
 #include <vector>		//used in the implementation of Matrix class
-#include "Matrix.h"
+#include "matrix.h"
 
 /*
 Initializes a Matrix by copying from a vector of vector of doubles.
@@ -59,35 +59,6 @@ Matrix::Matrix (const Matrix &matrix) : _matrix(matrix._matrix), _rows(matrix.ro
 } //Note that, since _matrix is a vector<double>, matrix is doing a deep copy.
 
 /*
-Overloads << so we can print a matrix.
-*/
-std::ostream& operator<< (std::ostream& os, const Matrix& matrix) {
-	
-	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl;
-
-	int j{ 1 }; //counts the columns, so we can know when to end the line
-
-	//loop invariant: j == column number of the entry being read
-	for (auto itr = matrix.cbegin(); itr != matrix.cend(); ++itr) {
-		if (j == 1) {
-			os << "[ " << *itr << ", ";
-			++j;
-		} else if ( j == matrix.columns() ) {
-			os << *itr << " ]" << std::endl;
-			j = 1;	
-		} else {
-			os << *itr << ", ";
-			++j;
-		}
-
-		//TODO: include padding to make reading easier. 
-		//First must implement a function that receives the matrix and finds out the number of digits of the largest entry.
-		//Then use it to see how much padding we should use.
-	}
-	return os;
-}
-
-/*
 Overloads () to access an element [i,j] of the matrix.
 */
 const double& Matrix::operator() (std::vector<double>::size_type i,
@@ -95,7 +66,7 @@ const double& Matrix::operator() (std::vector<double>::size_type i,
 	return _matrix[i * static_cast<std::vector<double>::size_type>(_columns) + j];
 }
 double& Matrix::operator() (std::vector<double>::size_type i, std::vector<double>::size_type j) {
-	return const_cast<double&>(const_cast<const Matrix&>(this)(i, j));
+	return const_cast<double&>((*(const_cast<Matrix* const>(this)))(i, j));
 }
 
 /*
@@ -123,14 +94,14 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 	// Number of rows is calculated beforehand to avoid calling in the loop check.
 	auto number_of_rows = this->rows();
 
-	for (int i{ 0 }; i != number_of_rows; ++i) {
+	for (unsigned i{ 0 }; i != number_of_rows; ++i) {
 		vec_iter = vector.cbegin();
 		row_iter = this->row_cbegin(i);
 		row_end = this->row_cend(i);
-		
+		double sum{ 0.0 };
 		//it is not necessary to check vec_iter because we are guaranteed that
 		//row_iter and vec_iter will iterate over the same number of elements 
-		for (double sum{ 0.0 }; row_iter != row_end; ++row_iter, ++vec_iter) {
+		for (; row_iter != row_end; ++row_iter, ++vec_iter) {
 			sum += (*row_iter)*(*vec_iter);
 		}
 		ret.push_back(sum);
@@ -138,21 +109,6 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 
 	return ret;
 }
-
-/*
-Returns the number of rows of the matrix.
-*/
-const unsigned Matrix::rows () const {
-	return const_cast<const auto>(_rows);
-}
-
-/*
-Returns the number of columns of the matrix.
-*/
-const unsigned Matrix::columns() const {
-	return const_cast<const auto>(_columns);
-}
-
 
 //elementary row operations
 /*
@@ -165,9 +121,7 @@ Matrix Matrix::exchangeRows (std::vector<double>::size_type row1, std::vector<do
 		throw std::invalid_argument("Matrix: both rows must be smaller than the matrix's dimensions.");
 
 	if (row1 == row2)
-		return; //saves time when the rows are the same.
-
-	double temp; //variable to store the temporary value of the entry being exchanged
+		return *this; //saves time when the rows are the same.
 
 	//reads the rows from beginning to end and exchange the entries between themselves.
 	for (iterator itr1 = this->row_begin(row1), itr2 = this->row_begin(row2); itr1 != this->row_end(row1); ++itr1, ++itr2){
@@ -230,4 +184,33 @@ Matrix operator* (double scalar, Matrix matrix) {
 		*itr *= scalar;
 	}
 	return matrix;
+}
+
+/*
+Overloads << so we can print a matrix.
+*/
+std::ostream& operator<< (std::ostream& os, const Matrix& matrix) {
+	
+	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl;
+
+	unsigned j{ 1 }; //counts the columns, so we can know when to end the line
+
+	//loop invariant: j == column number of the entry being read
+	for (auto itr = matrix.cbegin(); itr != matrix.cend(); ++itr) {
+		if (j == 1) {
+			os << "[ " << *itr << ", ";
+			++j;
+		} else if ( j == matrix.columns() ) {
+			os << *itr << " ]" << std::endl;
+			j = 1;	
+		} else {
+			os << *itr << ", ";
+			++j;
+		}
+
+		//TODO: include padding to make reading easier. 
+		//First must implement a function that receives the matrix and finds out the number of digits of the largest entry.
+		//Then use it to see how much padding we should use.
+	}
+	return os;
 }

@@ -1,5 +1,5 @@
-#ifndef GUARD_Matrix_h
-#define GUARD_Matrix_h
+#ifndef GUARD_matrix_h
+#define GUARD_matrix_h
 
 #include <ostream>	//used std::ostream
 #include <utility>	//used std::pair
@@ -44,16 +44,11 @@ public:
 	//end of constructors
 
 	/*
-	Overloads << so we can print a matrix.
-	*/
-	std::ostream& operator<< (std::ostream&, const Matrix&);
-
-	/*
 	Overloads () to access an element [i,j] of the matrix. Start counting at 0.
 	It is inlined to optimize performance.
 	*/
-	inline const double& operator() (std::vector<double>::size_type, std::vector<double>::size_type) const;
-	inline double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
+	const double& operator() (std::vector<double>::size_type, std::vector<double>::size_type) const;
+	double& operator() (std::vector<double>::size_type, std::vector<double>::size_type);
 	
 	/*
 	Overloads * to multiply a matrix on the right by a vector.
@@ -67,13 +62,17 @@ public:
 	Returns the number of rows of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const unsigned rows () const;
+	unsigned rows() const {
+		return const_cast<const unsigned&>(_rows);
+	}
 
 	/*
 	Returns the number of columns of the matrix.
 	It is inlined to optimize performance.
 	*/
-	inline const unsigned columns() const;
+	unsigned columns() const {
+		return const_cast<const unsigned&>(_columns);
+	};
 
 	/*
 	Returns true if the matrix is empty, false otherwise.
@@ -204,5 +203,10 @@ private:
 	// This can make printing easier by padding. Also implement a function that receives the
 	// matrix as argument and finds out the number of digits of the largest entry.
 };
+
+/*
+Overloads << so we can print a matrix.
+*/
+std::ostream& operator<< (std::ostream&, const Matrix&);
 
 #endif
