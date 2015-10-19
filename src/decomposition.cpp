@@ -1,8 +1,8 @@
 #include <cfloat>		//used std::DBL_EPSILON
 #include <stdexcept>	//used std::invalid_argument
 #include <utility>		//used std::pair and std::make_pair
-#include "Matrix.h"
 #include "decomposition.h"
+#include "matrix.h"
 
 /*
 Decomposes matrix A into A = LU where L is lower triangular and U is upper triangular.

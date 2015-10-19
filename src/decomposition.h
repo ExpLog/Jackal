@@ -2,7 +2,7 @@
 #define GUARD_decomposition_h
 
 #include <utility>		//used std::pair
-#include "Matrix.h"
+#include "matrix.h"
 
 //TODO: learn about matrix conditioning and matrix preconditioning
 
