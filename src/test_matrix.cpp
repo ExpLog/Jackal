@@ -13,14 +13,14 @@ int main() {
 	cout << id_1_1 << endl;
 
 	Matrix id_2_2(2, 2, 0.0);
-	for (unsigned i = 0; i < 2u; ++i){
+	for (size_t i = 0; i < 2u; ++i){
 		id_2_2(i,i) = 1.0;
 	}
 	cout << "Constructed Id 2x2!" << endl;
 	cout << id_2_2 << endl;
 
 	Matrix id_3_3(3, 3, 0.0);
-	for (unsigned i = 0; i < 3u; ++i){
+	for (size_t i = 0; i < 3u; ++i){
 		id_3_3(i,i) = 1.0;
 	}
 	cout << "Constructed Id 3x3!" << endl;

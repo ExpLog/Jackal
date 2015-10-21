@@ -31,11 +31,11 @@ public:
 
 	/*
 	Initializes a Matrix of dimensions rows x columns with the defaultValue.
-	Expects rows and columns to be (unsigned and) positive. 
+	Expects rows and columns to be (size_t and) positive. 
 	If no defaultValue is passed to the function, it initializes the matrix
 	with 0.0 in all entries.
 	*/
-	Matrix (unsigned, unsigned, double);
+	Matrix (size_t, size_t, double);
 
 	/*
 	Copy constructor. Makes a deep copy of the input matrix.
@@ -62,16 +62,16 @@ public:
 	Returns the number of rows of the matrix.
 	It is inlined to optimize performance.
 	*/
-	unsigned rows() const {
-		return const_cast<const unsigned&>(_rows);
+	size_t rows() const {
+		return const_cast<const size_t&>(_rows);
 	}
 
 	/*
 	Returns the number of columns of the matrix.
 	It is inlined to optimize performance.
 	*/
-	unsigned columns() const {
-		return const_cast<const unsigned&>(_columns);
+	size_t columns() const {
+		return const_cast<const size_t&>(_columns);
 	};
 
 	/*
@@ -196,9 +196,8 @@ private:
 
 	//data structures
 	std::vector<double> _matrix;
-	unsigned _rows;
-	unsigned _columns;
-	// TODO: make _rows and _columns unsigned long long or even size_t?
+	size_t _rows;
+	size_t _columns;
 	// TODO: maybe create another atribute to hold the number of digits of the largest entry.
 	// This can make printing easier by padding. Also implement a function that receives the
 	// matrix as argument and finds out the number of digits of the largest entry.

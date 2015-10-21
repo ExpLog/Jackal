@@ -18,7 +18,7 @@ Matrix::Matrix (const std::vector< std::vector<double> > &matrix) {
 	_rows = matrix.size();
 	_columns = matrix[0].size();
 	_matrix.reserve(_rows * _columns);	//reserves needed space for the whole matrix
-	// Note that _rows and _columns are unsigned long long, while reserve asks for a
+	// Note that _rows and _columns are size_t long long, while reserve asks for a
 	// size_type argument. 
 
 	// TODO: check what happens when an overflow happens above! PS: if reserve's argument is greater
@@ -39,11 +39,11 @@ Matrix::Matrix (const std::vector< std::vector<double> > &matrix) {
 
 /*
 Initializes a Matrix of dimensions rows x columns with the defaultValue.
-Expects rows and columns to be (unsigned and) positive. 
+Expects rows and columns to be (size_t and) positive. 
 If no defaultValue is passed to the function, it initializes the matrix
 with 0.0 in all entries.
 */
-Matrix::Matrix(unsigned rows, unsigned columns, double defaultValue = 0.0) {
+Matrix::Matrix(size_t rows, size_t columns, double defaultValue = 0.0) {
 	if (!rows || !columns) {
 		throw std::invalid_argument("Matrix: Both dimensions must be positive.");
 	}
@@ -94,8 +94,8 @@ std::vector<double> Matrix::operator* (std::vector<double> &vector){
 	// Number of rows is calculated beforehand to avoid calling in the loop check.
 	auto number_of_rows = this->rows();
 
-	for (unsigned i{ 0 }; i != number_of_rows; ++i) {
-		vec_iter = vector.cbegin();
+	for (size_t i{ 0 }; i != number_of_rows; ++i) {
+		vec_iter = std::begin(vector);
 		row_iter = this->row_cbegin(i);
 		row_end = this->row_cend(i);
 		double sum{ 0.0 };
@@ -193,7 +193,7 @@ std::ostream& operator<< (std::ostream& os, const Matrix& matrix) {
 	
 	os << "Matrix " << matrix.rows() << "x" << matrix.columns() << std::endl;
 
-	unsigned j{ 1 }; //counts the columns, so we can know when to end the line
+	size_t j{ 1 }; //counts the columns, so we can know when to end the line
 
 	//loop invariant: j == column number of the entry being read
 	for (auto itr = matrix.cbegin(); itr != matrix.cend(); ++itr) {

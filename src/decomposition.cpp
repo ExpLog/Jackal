@@ -18,9 +18,9 @@ std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
 	if (A.rows() != A.columns())
 		throw std::invalid_argument("lu_decomp: the matrix must be square.");
 
-	const unsigned dimension = A.rows();
+	const size_t dimension = A.rows();
 	Matrix L(A.rows(), A.columns(), 0.0);
-	for (unsigned i = 0; i < dimension; ++i) {
+	for (size_t i = 0; i < dimension; ++i) {
 		L(i, i) = 1.0;
 	}
 	Matrix U(A.rows(), A.columns(), 0.0);
@@ -32,10 +32,10 @@ std::pair<Matrix, Matrix> lu_decomp(Matrix& A){
 	// max_index will hold the index of the row with the current greatest entry in column j
 	//(as long as it is greater than j).
 	// max_entry will be the largest entry in the column j.
-	unsigned i, k, max_index;
+	size_t i, k, max_index;
 	double max_entry;
 
-	for (unsigned j = 0; j < dimension; ++j){
+	for (size_t j = 0; j < dimension; ++j){
 		//we want to pivot matrix A, that is, exchange the current row j
 		//with the row k>j that has the greatest entry in column j
 		max_index = j;
